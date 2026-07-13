@@ -200,7 +200,7 @@ export function NovelReader() {
           <div className="orbit-mark" aria-hidden="true"><span /></div>
           <div>
             <p className="eyebrow">星際生存物語</p>
-            <h1>歸墟</h1>
+            <h1>對齊：歸墟</h1>
           </div>
         </div>
 
@@ -245,7 +245,7 @@ export function NovelReader() {
             <span /><span /><span />
           </button>
           <div className="current-location">
-            <span>《歸墟》</span>
+            <span>《對齊：歸墟》</span>
             <i aria-hidden="true" />
             <span>{chapter.kind === "appendix" ? "世界設定" : `第 ${chapter.number} 章`}</span>
           </div>

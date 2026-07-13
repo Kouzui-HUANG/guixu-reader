@@ -7,8 +7,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("host") || "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") || (host.startsWith("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
-  const title = "歸墟｜沉浸式小說閱讀";
-  const description = "《歸墟》——星際開拓遇難記，一部帶著懸疑感的女性雙主角生存物語。";
+  const title = "對齊：歸墟｜沉浸式小說閱讀";
+  const description = "《對齊：歸墟》——星際開拓遇難記，一部帶著懸疑感的女性雙主角生存物語。";
 
   return {
     metadataBase: new URL(origin),
@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       locale: "zh_TW",
-      images: [{ url: `${origin}/og.png`, width: 1734, height: 907, alt: "《歸墟》小說閱讀器" }],
+      images: [{ url: `${origin}/og.png`, width: 1734, height: 907, alt: "《對齊：歸墟》小說閱讀器" }],
     },
     twitter: {
       card: "summary_large_image",

@@ -1,4 +1,4 @@
-/* 歸墟 靜態閱讀器 — reader.tsx 的原生 JS 移植版（無框架、自我包含） */
+/* 對齊：歸墟 靜態閱讀器 — reader.tsx 的原生 JS 移植版（無框架、自我包含） */
 (function () {
   "use strict";
 
@@ -90,7 +90,7 @@
         '<aside class="sidebar" aria-label="章節目錄">' +
           '<div class="book-mark">' +
             '<div class="orbit-mark" aria-hidden="true"><span></span></div>' +
-            "<div><p class=\"eyebrow\">星際生存物語</p><h1>歸墟</h1></div>" +
+            "<div><p class=\"eyebrow\">星際生存物語</p><h1>對齊：歸墟</h1></div>" +
           "</div>" +
           '<p class="book-note">所有失聯的航線，<br />最後都流向同一顆星。</p>' +
           '<div class="toc-heading"><span>正文</span><span>12 章</span></div>' +
@@ -105,7 +105,7 @@
         '<div class="reading-stage">' +
           '<header class="topbar">' +
             '<button class="icon-button menu-button" data-act="open-drawer" aria-label="開啟章節目錄"><span></span><span></span><span></span></button>' +
-            '<div class="current-location"><span>《歸墟》</span><i aria-hidden="true"></i><span class="loc-chapter"></span></div>' +
+            '<div class="current-location"><span>《對齊：歸墟》</span><i aria-hidden="true"></i><span class="loc-chapter"></span></div>' +
             '<div class="reading-status"><span class="status-pct">0%</span><div><i class="status-bar"></i></div></div>' +
             '<button class="settings-button" data-act="toggle-settings" aria-expanded="false" aria-controls="reader-settings"><span class="type-icon" aria-hidden="true">文</span><span>閱讀設定</span></button>' +
             '<div class="chapter-progress" aria-hidden="true"></div>' +
