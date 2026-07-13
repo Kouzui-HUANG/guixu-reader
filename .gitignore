@@ -1,0 +1,21 @@
+# ===== macOS =====
+.DS_Store
+
+# ===== Claude Code / skills config (contain API keys — NEVER commit) =====
+/.claude/
+/.agents/
+
+# ===== Node / build artifacts =====
+node_modules/
+/reader/.next/
+/reader/dist/
+/reader/.wrangler/
+/reader/out/
+/reader/coverage/
+
+# ===== Secrets (safety net) =====
+*.gmi_api_key
+.gmi_api_key
+.env
+.env.*
+*.pem
