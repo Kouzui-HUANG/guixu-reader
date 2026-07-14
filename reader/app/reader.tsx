@@ -28,6 +28,7 @@ const CHAPTERS: Chapter[] = [
   { id: "chapter-10", number: "10", title: "先知", file: "10-先知.md", minutes: 7, kind: "chapter" },
   { id: "chapter-11", number: "11", title: "對齊", file: "11-對齊.md", minutes: 7, kind: "chapter" },
   { id: "chapter-12", number: "12", title: "眾水所歸", file: "12-眾水所歸.md", minutes: 8, kind: "chapter" },
+  { id: "character-shen-ningyu", number: "人", title: "沈寧嶼人物誌", file: "00A-人物誌-沈寧嶼.md", minutes: 8, kind: "appendix" },
   { id: "appendix", number: "附", title: "設定集", file: "00-設定集.md", minutes: 32, kind: "appendix" },
 ];
 
@@ -169,6 +170,19 @@ export function NovelReader() {
     setSettingsOpen(false);
     setActiveIndex(index);
   }, []);
+
+  const handleMarkdownClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
+    const link = target.closest("a[href]");
+    if (!link) return;
+
+    const href = (link.getAttribute("href") || "").replace(/^\.\//, "").split("#")[0];
+    const targetIndex = CHAPTERS.findIndex((item) => item.file === href);
+    if (targetIndex < 0) return;
+
+    event.preventDefault();
+    goToChapter(targetIndex);
+  }, [goToChapter]);
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
@@ -327,7 +341,7 @@ export function NovelReader() {
               </div>
             )}
             {!loading && !loadError && (
-              <div className="markdown-body" dangerouslySetInnerHTML={{ __html: content }} />
+              <div className="markdown-body" onClick={handleMarkdownClick} dangerouslySetInnerHTML={{ __html: content }} />
             )}
 
             {!loading && !loadError && (

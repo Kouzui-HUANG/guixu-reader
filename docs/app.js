@@ -15,6 +15,7 @@
     { id: "chapter-10", number: "10", title: "先知", file: "10-先知.md", minutes: 7, kind: "chapter" },
     { id: "chapter-11", number: "11", title: "對齊", file: "11-對齊.md", minutes: 7, kind: "chapter" },
     { id: "chapter-12", number: "12", title: "眾水所歸", file: "12-眾水所歸.md", minutes: 8, kind: "chapter" },
+    { id: "character-shen-ningyu", number: "人", title: "沈寧嶼人物誌", file: "00A-人物誌-沈寧嶼.md", minutes: 8, kind: "appendix" },
     { id: "appendix", number: "附", title: "設定集", file: "00-設定集.md", minutes: 32, kind: "appendix" },
   ];
   var BODY = CHAPTERS.filter(function (c) { return c.kind === "chapter"; });
@@ -232,6 +233,16 @@
 
     el.articleBody.querySelectorAll("[data-goto]").forEach(function (btn) {
       btn.addEventListener("click", function () { goToChapter(Number(btn.getAttribute("data-goto"))); });
+    });
+
+    el.articleBody.querySelectorAll(".markdown-body a[href]").forEach(function (link) {
+      var href = (link.getAttribute("href") || "").replace(/^\.\//, "").split("#")[0];
+      var targetIndex = CHAPTERS.findIndex(function (item) { return item.file === href; });
+      if (targetIndex < 0) return;
+      link.addEventListener("click", function (event) {
+        event.preventDefault();
+        goToChapter(targetIndex);
+      });
     });
   }
 

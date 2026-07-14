@@ -12,6 +12,7 @@ node_modules/
 /reader/.wrangler/
 /reader/out/
 /reader/coverage/
+/.pages-dist/
 
 # ===== Secrets (safety net) =====
 *.gmi_api_key
