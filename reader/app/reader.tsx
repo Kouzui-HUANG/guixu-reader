@@ -70,8 +70,10 @@ export function NovelReader() {
 
   const chapter = CHAPTERS[activeIndex];
   const bodyChapters = useMemo(() => CHAPTERS.filter((item) => item.kind === "chapter"), []);
-  const previous = chapter.kind === "chapter" && activeIndex > 0 ? CHAPTERS[activeIndex - 1] : null;
-  const next = chapter.kind === "chapter" && activeIndex < bodyChapters.length - 1 ? CHAPTERS[activeIndex + 1] : null;
+  const appendixChapters = useMemo(() => CHAPTERS.filter((item) => item.kind === "appendix"), []);
+  const previous = activeIndex > 0 ? CHAPTERS[activeIndex - 1] : null;
+  const next = activeIndex < CHAPTERS.length - 1 ? CHAPTERS[activeIndex + 1] : null;
+  const enteringAppendix = chapter.kind === "chapter" && next?.kind === "appendix";
 
   useEffect(() => {
     const saved = readSavedState();
@@ -239,16 +241,24 @@ export function NovelReader() {
           ))}
         </nav>
 
-        <div className="toc-heading appendix-heading"><span>附錄</span></div>
-        <button
-          className={`appendix-link ${chapter.kind === "appendix" ? "active" : ""}`}
-          onClick={() => goToChapter(CHAPTERS.length - 1)}
-          aria-current={chapter.kind === "appendix" ? "page" : undefined}
-        >
-          <span className="chapter-number">附</span>
-          <span className="chapter-name">世界設定集</span>
-          <span className="chapter-time">32 分</span>
-        </button>
+        <div className="toc-heading appendix-heading"><span>附錄</span><span>{appendixChapters.length} 篇</span></div>
+        <nav className="chapter-list">
+          {appendixChapters.map((item) => {
+            const index = CHAPTERS.findIndex((entry) => entry.id === item.id);
+            return (
+              <button
+                className={`appendix-link ${chapter.id === item.id ? "active" : ""}`}
+                key={item.id}
+                onClick={() => goToChapter(index)}
+                aria-current={chapter.id === item.id ? "page" : undefined}
+              >
+                <span className="chapter-number">{item.number}</span>
+                <span className="chapter-name">{item.title}</span>
+                <span className="chapter-time">{item.minutes} 分</span>
+              </button>
+            );
+          })}
+        </nav>
       </aside>
 
       {drawerOpen && <button className="drawer-backdrop" onClick={() => setDrawerOpen(false)} aria-label="關閉目錄" />}
@@ -347,7 +357,7 @@ export function NovelReader() {
             {!loading && !loadError && (
               <footer className="chapter-footer">
                 <div className="end-mark" aria-hidden="true"><span>✦</span></div>
-                <p>{chapter.kind === "appendix" ? "設定集完" : `第 ${chapter.number} 章完`}</p>
+                <p>{chapter.kind === "appendix" ? `${chapter.title}完` : `第 ${chapter.number} 章完`}</p>
                 <div className="chapter-nav">
                   {previous ? (
                     <button className="previous" onClick={() => goToChapter(activeIndex - 1)}>
@@ -356,11 +366,7 @@ export function NovelReader() {
                   ) : <span />}
                   {next ? (
                     <button className="next" onClick={() => goToChapter(activeIndex + 1)}>
-                      <span>下一章 →</span><strong>{next.title}</strong>
-                    </button>
-                  ) : chapter.kind === "chapter" ? (
-                    <button className="next" onClick={() => goToChapter(CHAPTERS.length - 1)}>
-                      <span>繼續探索 →</span><strong>世界設定集</strong>
+                      <span>{enteringAppendix ? "繼續探索 →" : "下一章 →"}</span><strong>{next.title}</strong>
                     </button>
                   ) : <span />}
                 </div>

@@ -19,6 +19,7 @@
     { id: "appendix", number: "附", title: "設定集", file: "00-設定集.md", minutes: 32, kind: "appendix" },
   ];
   var BODY = CHAPTERS.filter(function (c) { return c.kind === "chapter"; });
+  var APPENDIX = CHAPTERS.filter(function (c) { return c.kind === "appendix"; });
   var STORAGE_KEY = "guixu-reader-v1";
 
   var THEMES = [
@@ -85,6 +86,17 @@
       );
     }).join("");
 
+    var appendixButtons = APPENDIX.map(function (item) {
+      var index = CHAPTERS.indexOf(item);
+      return (
+        '<button class="appendix-link" data-index="' + index + '">' +
+        '<span class="chapter-number">' + esc(item.number) + "</span>" +
+        '<span class="chapter-name">' + esc(item.title) + "</span>" +
+        '<span class="chapter-time">' + item.minutes + " 分</span>" +
+        "</button>"
+      );
+    }).join("");
+
     return (
       '<div class="reader-shell">' +
         '<div class="cosmos" aria-hidden="true"></div>' +
@@ -96,12 +108,8 @@
           '<p class="book-note">所有失聯的航線，<br />最後都流向同一顆星。</p>' +
           '<div class="toc-heading"><span>正文</span><span>12 章</span></div>' +
           '<nav class="chapter-list">' + chapterButtons + "</nav>" +
-          '<div class="toc-heading appendix-heading"><span>附錄</span></div>' +
-          '<button class="appendix-link" data-index="' + (CHAPTERS.length - 1) + '">' +
-            '<span class="chapter-number">附</span>' +
-            '<span class="chapter-name">世界設定集</span>' +
-            '<span class="chapter-time">32 分</span>' +
-          "</button>" +
+          '<div class="toc-heading appendix-heading"><span>附錄</span><span>' + APPENDIX.length + ' 篇</span></div>' +
+          '<nav class="chapter-list">' + appendixButtons + "</nav>" +
         "</aside>" +
         '<div class="reading-stage">' +
           '<header class="topbar">' +
@@ -164,10 +172,12 @@
       btns[i].classList.toggle("active", active);
       if (active) btns[i].setAttribute("aria-current", "page"); else btns[i].removeAttribute("aria-current");
     });
-    var appendixBtn = el.sidebar.querySelector(".appendix-link");
-    var appActive = chapter.kind === "appendix";
-    appendixBtn.classList.toggle("active", appActive);
-    if (appActive) appendixBtn.setAttribute("aria-current", "page"); else appendixBtn.removeAttribute("aria-current");
+    var appendixBtns = el.sidebar.querySelectorAll(".appendix-link");
+    APPENDIX.forEach(function (item, i) {
+      var appActive = chapter.id === item.id;
+      appendixBtns[i].classList.toggle("active", appActive);
+      if (appActive) appendixBtns[i].setAttribute("aria-current", "page"); else appendixBtns[i].removeAttribute("aria-current");
+    });
   }
 
   function renderTopbar() {
@@ -208,26 +218,22 @@
     }
     // content + footer
     var index = state.activeIndex;
-    var prev = chapter.kind === "chapter" && index > 0 ? CHAPTERS[index - 1] : null;
-    var next = chapter.kind === "chapter" && index < BODY.length - 1 ? CHAPTERS[index + 1] : null;
+    var prev = index > 0 ? CHAPTERS[index - 1] : null;
+    var next = index < CHAPTERS.length - 1 ? CHAPTERS[index + 1] : null;
+    var enteringAppendix = chapter.kind === "chapter" && next && next.kind === "appendix";
 
     var navLeft = prev
       ? '<button class="previous" data-goto="' + (index - 1) + '"><span>← 上一章</span><strong>' + esc(prev.title) + "</strong></button>"
       : "<span></span>";
-    var navRight;
-    if (next) {
-      navRight = '<button class="next" data-goto="' + (index + 1) + '"><span>下一章 →</span><strong>' + esc(next.title) + "</strong></button>";
-    } else if (chapter.kind === "chapter") {
-      navRight = '<button class="next" data-goto="' + (CHAPTERS.length - 1) + '"><span>繼續探索 →</span><strong>世界設定集</strong></button>';
-    } else {
-      navRight = "<span></span>";
-    }
+    var navRight = next
+      ? '<button class="next" data-goto="' + (index + 1) + '"><span>' + (enteringAppendix ? "繼續探索 →" : "下一章 →") + '</span><strong>' + esc(next.title) + "</strong></button>"
+      : "<span></span>";
 
     el.articleBody.innerHTML =
       '<div class="markdown-body">' + html + "</div>" +
       '<footer class="chapter-footer">' +
         '<div class="end-mark" aria-hidden="true"><span>✦</span></div>' +
-        "<p>" + (chapter.kind === "appendix" ? "設定集完" : "第 " + chapter.number + " 章完") + "</p>" +
+        "<p>" + (chapter.kind === "appendix" ? esc(chapter.title) + "完" : "第 " + chapter.number + " 章完") + "</p>" +
         '<div class="chapter-nav">' + navLeft + navRight + "</div>" +
       "</footer>";
 
@@ -404,8 +410,8 @@
     el.sidebar.querySelectorAll(".chapter-btn").forEach(function (btn) {
       btn.addEventListener("click", function () { goToChapter(Number(btn.getAttribute("data-index"))); });
     });
-    el.sidebar.querySelector(".appendix-link").addEventListener("click", function () {
-      goToChapter(Number(el.sidebar.querySelector(".appendix-link").getAttribute("data-index")));
+    el.sidebar.querySelectorAll(".appendix-link").forEach(function (btn) {
+      btn.addEventListener("click", function () { goToChapter(Number(btn.getAttribute("data-index"))); });
     });
 
     // 載入已存狀態
@@ -440,12 +446,9 @@
     window.addEventListener("keydown", function (e) {
       var tag = (e.target && e.target.tagName) || "";
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      var chapter = CHAPTERS[state.activeIndex];
       var index = state.activeIndex;
-      var hasPrev = chapter.kind === "chapter" && index > 0;
-      var hasNext = chapter.kind === "chapter" && index < BODY.length - 1;
-      if (e.key === "ArrowLeft" && hasPrev) goToChapter(index - 1);
-      if (e.key === "ArrowRight" && hasNext) goToChapter(index + 1);
+      if (e.key === "ArrowLeft" && index > 0) goToChapter(index - 1);
+      if (e.key === "ArrowRight" && index < CHAPTERS.length - 1) goToChapter(index + 1);
       if (e.key === "Escape") { setDrawer(false); setSettings(false); }
     });
   }
