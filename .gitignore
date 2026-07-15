@@ -13,6 +13,7 @@ node_modules/
 /reader/out/
 /reader/coverage/
 /.pages-dist/
+*.tsbuildinfo
 
 # ===== Secrets (safety net) =====
 *.gmi_api_key
